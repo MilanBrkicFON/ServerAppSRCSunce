@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import kontroler.Kontroler;
+import osluskivac.OsluskivacClanovi;
 import request.RequestObject;
 import response.ResponseObject;
 import status.EnumResponseStatus;
@@ -229,7 +230,18 @@ public class KlijentNit implements Runnable {
                     response.setMessage(ex.getMessage());
                 }
                 return response;
-
+                
+            case Akcije.POSTAVI_OSLUSKIVACA:
+                try {
+                    OsluskivacClanovi o = (OsluskivacClanovi) request.getObject();
+                    Kontroler.getInstance().addListener(o);
+                    response.setStatus(EnumResponseStatus.OK);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
 //            case Akcije.UBACI_TRENERA:
 //                trener = (Trener) request.getObject();
 //                try {
