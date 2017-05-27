@@ -9,6 +9,7 @@ import db.DBBroker;
 import db.Util;
 import domen.Clan;
 import domen.Mesto;
+import domen.Sport;
 import domen.Trener;
 import domen.Trening;
 import greske.SQLObjekatPostojiException;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import osluskivac.OsluskivacClanovi;
 
 /**
  *
@@ -29,11 +29,9 @@ public class Kontroler {
 
     private static Kontroler INSTANCE;
     private DBBroker dbbr;
-    private List<OsluskivacClanovi> listeners;
 
     private Kontroler() {
         dbbr = new DBBroker();
-        listeners = new ArrayList<>();
     }
 
     public static Kontroler getInstance() {
@@ -43,26 +41,12 @@ public class Kontroler {
         return INSTANCE;
     }
 
-    public void addListener(OsluskivacClanovi listener) {
-        listeners.add(listener);
-    }
-
-    public void obavestiSveDodavanje(Clan clan) {
-        for (OsluskivacClanovi listener : listeners) {
-            listener.oDodajClana(clan);
-        }
-    }
-
-    public void obavestiSveBrisanje(Clan clan) {
-        for (OsluskivacClanovi listener : listeners) {
-            listener.oObrisiClana(clan);
-        }
-    }
-
     public void uspostaviKonekcijuNaBazu() throws Exception {
         try {
             dbbr.uspostaviKonekcijuNaBazu();
-            Util.getInstance().setStatus(true);
+            if (!Util.getInstance().isConnectedStatus()) {
+                Util.getInstance().setStatus(true);
+            }
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
             Util.getInstance().setStatus(false);
@@ -112,32 +96,6 @@ public class Kontroler {
         return treninzi;
     }
 
-    @Deprecated
-    public List<Object> vratiSveNaTreningu(Trening trening) throws Exception {
-
-        try {
-            dbbr.uspostaviKonekcijuNaBazu();
-        } catch (ClassNotFoundException ex) {
-            throw new Exception("Konfiguracioni fajl nije pronadjen.");
-        } catch (IOException ex) {
-            throw new Exception("Greska prilikom otvaranja i/ili citanja konfiguracionog fajla.");
-        } catch (SQLException ex) {
-            throw new Exception("Greska prilikom povezivanja sa bazom ili url za bazu nije dobar.");
-        }
-        List<Object> ucesnici = new ArrayList<>();
-        try {
-
-            System.out.println();
-            dbbr.potvrdiTransakciju();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            dbbr.ponistiTransakciju();
-        } finally {
-            dbbr.raskiniKonekciju();
-        }
-        return ucesnici;
-    }
-
     public List<Clan> vratiSveClanove(Trening trening) throws Exception {
 
         uspostaviKonekcijuNaBazu();
@@ -174,6 +132,28 @@ public class Kontroler {
         return treneri;
     }
 
+    public void ubaciTrenera(Trener trener) throws Exception, SQLObjekatPostojiException {
+        List<Trener> clanovi = vratiSveTrenere();
+
+        if (clanovi.contains(trener)) {
+            throw new SQLObjekatPostojiException("Clan sa datim imenom vec postoji u bazi!");
+        }
+
+        uspostaviKonekcijuNaBazu();
+
+        try {
+            dbbr.insertTrener(trener);
+            dbbr.potvrdiTransakciju();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            dbbr.ponistiTransakciju();
+            throw new Exception("Greška prilikom ubacivanja člana.");
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+
+    }
+
     public void ubaciClana(Clan clan) throws Exception, SQLObjekatPostojiException {
         List<Clan> clanovi = vratiSveClanove();
 
@@ -186,7 +166,6 @@ public class Kontroler {
         try {
             dbbr.insertClan(clan);
             dbbr.potvrdiTransakciju();
-            obavestiSveDodavanje(clan);
         } catch (SQLException ex) {
             dbbr.ponistiTransakciju();
             throw new Exception("Greška prilikom ubacivanja člana.");
@@ -234,7 +213,6 @@ public class Kontroler {
         try {
             dbbr.obrisiClana(clan);
             dbbr.potvrdiTransakciju();
-            obavestiSveBrisanje(clan);
         } catch (SQLException e) {
             dbbr.ponistiTransakciju();
             throw new Exception("Desila se greška prilikom brisanja člana.\n" + e.getMessage());
@@ -262,11 +240,27 @@ public class Kontroler {
         }
     }
 
-    public int vratiMaxId() throws Exception {
+    public int vratiMaxIdClan() throws Exception {
         uspostaviKonekcijuNaBazu();
         int i;
         try {
-            i = dbbr.vratiMaxId();
+            i = dbbr.vratiMaxIdClan();
+            dbbr.potvrdiTransakciju();
+        } catch (SQLException ex) {
+            dbbr.ponistiTransakciju();
+            i = 0;
+            throw new Exception("Desila se greška prilikom preuzimanja podataka iz baze.\n" + ex.getMessage());
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+        return i;
+    }
+
+    public int vratiMaxIdTrener() throws Exception {
+        uspostaviKonekcijuNaBazu();
+        int i;
+        try {
+            i = dbbr.vratiMaxIdTrener();
             dbbr.potvrdiTransakciju();
         } catch (SQLException ex) {
             dbbr.ponistiTransakciju();
@@ -283,7 +277,6 @@ public class Kontroler {
         try {
             dbbr.insertClanOnTraining(c, trening);
             dbbr.potvrdiTransakciju();
-            obavestiSveDodavanje(c);
         } catch (Exception ex) {
             ex.printStackTrace();
             dbbr.ponistiTransakciju();
@@ -292,7 +285,7 @@ public class Kontroler {
             dbbr.raskiniKonekciju();
         }
     }
-    
+
     public List<Clan> promeni(List<Clan> clanovi) throws Exception {
         uspostaviKonekcijuNaBazu();
         List<Clan> promenjeniClanovi = new ArrayList<>();
@@ -313,5 +306,71 @@ public class Kontroler {
             dbbr.raskiniKonekciju();
         }
         return promenjeniClanovi;
+    }
+
+    public List<Sport> vratiSveSportove() throws Exception {
+        uspostaviKonekcijuNaBazu();
+        List<Sport> sporotovi = new ArrayList<>();
+        try {
+            sporotovi.addAll(dbbr.getAllSport());
+            dbbr.potvrdiTransakciju();
+        } catch (Exception e) {
+            dbbr.ponistiTransakciju();
+            throw new Exception("Desila se greška prilikom preuzimanja podataka iz baze.\n" + e.getMessage());
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+        return sporotovi;
+    }
+
+    public List<Trener> promeniTrenere(List<Trener> treneri) throws Exception {
+        List<Trener> promenjenTrener = new ArrayList<>();
+        try {
+            for (Trener t : treneri) {
+                if (t.isPromenjen()) {
+                    dbbr.updateTrener(t);
+                    promenjenTrener.add(t);
+                    t.setPromenjen(false);
+                }
+            }
+            dbbr.potvrdiTransakciju();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            dbbr.ponistiTransakciju();
+            throw new Exception("Desila se greška tokom izmene članova.");
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+        return promenjenTrener;
+    }
+
+    public List<Trener> vratiSveTrenere() throws Exception {
+        uspostaviKonekcijuNaBazu();
+        List<Trener> treneri = new ArrayList<>();
+        try {
+            treneri = dbbr.getAllTreneri();
+            dbbr.potvrdiTransakciju();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            dbbr.ponistiTransakciju();
+            throw new Exception("Greška prilikom ubacivanja člana.");
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+        return treneri;
+    }
+
+    public void obrisi(Trener trener) throws Exception {
+        uspostaviKonekcijuNaBazu();
+
+        try {
+            dbbr.obrisiTrenera(trener);
+            dbbr.potvrdiTransakciju();
+        } catch (SQLException e) {
+            dbbr.ponistiTransakciju();
+            throw new Exception("Desila se greška prilikom brisanja člana.\n" + e.getMessage());
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
     }
 }

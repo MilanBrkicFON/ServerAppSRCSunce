@@ -22,6 +22,7 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -98,7 +99,7 @@ public class DBBroker {
     }
 
     public List<Trener> getAllTreneri() throws SQLException {
-        String upit = "SELECT trenerID, ime, prezime, datumRodjenja, godineRada, kratakCV,s.sportID as sportid, s.naziv as naziv,s.maxBrClanova as maxBr"
+        String upit = "SELECT trenerID, ime, prezime, datumRodjenja, godineRada, kratakCV,s.sportID as sportid, s.naziv as naziv,s.maxBrClanova as maxBr "
                 + "FROM trener "
                 + "INNER JOIN sport AS s ON trener.sportID = s.sportID";
         System.out.println(upit);
@@ -333,31 +334,63 @@ public class DBBroker {
             statement.setString(5, String.valueOf(clan.getPol()));
             statement.setInt(6, clan.getGodinaUpisa());
             statement.setInt(7, clan.getMesto().getPtt());
-            
+
             statement.executeUpdate();
         }
     }
 
+    public void insertTrener(Trener trener) throws SQLException {
+
+        String upit = "INSERT INTO trener(ime,prezime,datumrodjenja,godineRada,kratakcv,sportid) "
+                + "VALUES (?,?,?,?,?,?)";
+
+        System.out.println(upit);
+
+        try (PreparedStatement statement = connection.prepareStatement(upit)) {
+            statement.setString(1, trener.getIme());
+            statement.setString(2, trener.getPrezime());
+            statement.setDate(3, Date.valueOf(trener.getDatumRodjenja()));
+            statement.setInt(4, trener.getGodineRada());
+            statement.setString(5, trener.getKratakCV());
+            statement.setInt(6, trener.getSport().getSportID());
+            statement.executeUpdate();
+        }
+    }
+    public int vratiMaxIdTrener() throws SQLException {
+        String upit = "SELECT MAX(trenerId) AS maxid FROM trener";
+        System.out.println(upit);
+        int maxId;
+        try (PreparedStatement statement = connection.prepareStatement(upit);
+                ResultSet rs = statement.executeQuery()) {
+            maxId = 0;
+            while (rs.next()) {
+                maxId = rs.getInt("maxid");
+            }
+        }
+        return maxId;
+    }
+    
     public void obrisiClana(Clan clan) throws SQLException {
         String upit = "DELETE FROM clan WHERE clanID = ?";
         System.out.println(upit);
         try (PreparedStatement statement = connection.prepareStatement(upit)) {
             statement.setInt(1, clan.getClanID());
-            
+
             statement.executeUpdate();
         }
     }
 
-    public int vratiMaxId() throws SQLException {
+    public int vratiMaxIdClan() throws SQLException {
         String upit = "SELECT MAX(clanid) AS maxid FROM clan";
         System.out.println(upit);
         int maxId;
-        try (PreparedStatement statement = connection.prepareStatement(upit); 
+        try (PreparedStatement statement = connection.prepareStatement(upit);
                 ResultSet rs = statement.executeQuery()) {
             maxId = 0;
             while (rs.next()) {
                 maxId = rs.getInt("maxid");
-            }          }
+            }
+        }
         return maxId;
     }
 
@@ -369,7 +402,7 @@ public class DBBroker {
             statement.setTime(2, Time.valueOf(trening.getVremeOd()));
             statement.setTime(3, Time.valueOf(trening.getVremeDo()));
             statement.setDate(4, Date.valueOf(trening.getDatum()));
-            
+
             statement.executeUpdate();
         }
     }
@@ -386,7 +419,52 @@ public class DBBroker {
             statement.setInt(6, clan.getGodinaUpisa());
             statement.setInt(7, clan.getMesto().getPtt());
             statement.setInt(8, clan.getClanID());
-            
+
+            statement.executeUpdate();
+        }
+    }
+
+    public Collection<? extends Sport> getAllSport() throws SQLException {
+        String upit = "SELECT sportId, naziv, maxBrClanova FROM sport";
+        System.out.println(upit);
+
+        List<Sport> sport;
+        try (PreparedStatement statement = connection.prepareStatement(upit);
+                ResultSet rs = statement.executeQuery()) {
+            sport = new ArrayList<>();
+            while (rs.next()) {
+                Sport s = new Sport();
+                s.setSportID(rs.getInt("sportId"));
+                s.setNaziv(rs.getString("naziv"));
+                s.setMaxBrClanova(rs.getInt("maxBrClanova"));
+                sport.add(s);
+            }
+        }
+        return sport;
+    }
+
+    public void updateTrener(Trener t) throws SQLException {
+        String upit = "UPDATE trener SET ime = ?, prezime = ?, datumrodjenja = ?, godineRada = ?, kratakCV = ?, sportID = ? where trenerId = ?";
+        System.out.println(upit);
+        try (PreparedStatement statement = connection.prepareStatement(upit)) {
+            statement.setString(1, t.getIme());
+            statement.setString(2, t.getPrezime());
+            statement.setDate(3, Date.valueOf(t.getDatumRodjenja()));
+            statement.setInt(4, t.getGodineRada());
+            statement.setString(5, t.getKratakCV());
+            statement.setInt(6, t.getSport().getSportID());
+            statement.setInt(7, t.getTrenerID());
+
+            statement.executeUpdate();
+        }
+    }
+
+    public void obrisiTrenera(Trener trener) throws SQLException {
+        String upit = "DELETE FROM trener WHERE trenerid = ?";
+        System.out.println(upit);
+        try (PreparedStatement statement = connection.prepareStatement(upit)) {
+            statement.setInt(1, trener.getTrenerID());
+
             statement.executeUpdate();
         }
     }

@@ -7,6 +7,7 @@ package niti;
 
 import domen.Clan;
 import domen.Mesto;
+import domen.Sport;
 import domen.Trener;
 import domen.Trening;
 import greske.SQLObjekatPostojiException;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import kontroler.Kontroler;
-import osluskivac.OsluskivacClanovi;
 import request.RequestObject;
 import response.ResponseObject;
 import status.EnumResponseStatus;
@@ -147,9 +147,9 @@ public class KlijentNit implements Runnable {
                 }
                 return response;
 
-            case Akcije.VRATI_MAX_ID:
+            case Akcije.VRATI_MAX_ID_CLAN:
                 try {
-                    response.setObject(Kontroler.getInstance().vratiMaxId());
+                    response.setObject(Kontroler.getInstance().vratiMaxIdClan());
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
@@ -158,7 +158,17 @@ public class KlijentNit implements Runnable {
                     response.setMessage(ex.getMessage());
                 }
                 return response;
+            case Akcije.VRATI_MAX_ID_TRENER:
+                try {
+                    response.setObject(Kontroler.getInstance().vratiMaxIdTrener());
+                    response.setStatus(EnumResponseStatus.OK);
 
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
             case Akcije.USPOSTAVI_KONEKCIJU_NA_BAZU:
                 try {
                     Kontroler.getInstance().uspostaviKonekcijuNaBazu();
@@ -230,12 +240,59 @@ public class KlijentNit implements Runnable {
                     response.setMessage(ex.getMessage());
                 }
                 return response;
-                
-            case Akcije.POSTAVI_OSLUSKIVACA:
+
+            case Akcije.PROMENI_TRENERE:
                 try {
-                    OsluskivacClanovi o = (OsluskivacClanovi) request.getObject();
-                    Kontroler.getInstance().addListener(o);
+                    if (request.getObject() instanceof List) {
+                        List<Trener> treneri = (List<Trener>) request.getObject();
+                        response.setObject(Kontroler.getInstance().promeniTrenere(treneri));
+                        response.setStatus(EnumResponseStatus.OK);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
+            case Akcije.VRATI_SVA_SPORTOVE:
+                try {
+                    List<Sport> sportovi = Kontroler.getInstance().vratiSveSportove();
                     response.setStatus(EnumResponseStatus.OK);
+                    response.setObject(sportovi);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
+            case Akcije.VRATI_SVE_TRENERE:
+                try {
+                    List<Trener> treneri = Kontroler.getInstance().vratiSveTrenere();
+                    response.setStatus(EnumResponseStatus.OK);
+                    response.setObject(treneri);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
+            case Akcije.UBACI_TRENERA:
+                try {
+                    trener = (Trener) request.getObject();
+                    Kontroler.getInstance().ubaciTrenera(trener);
+                    response.setStatus(EnumResponseStatus.OK);
+                } catch (Exception | SQLObjekatPostojiException ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
+            case Akcije.OBRISI_TRENERA:
+                trener = (Trener) request.getObject();
+                try {
+                    Kontroler.getInstance().obrisi(trener);
+                    response.setStatus(EnumResponseStatus.OK);
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
