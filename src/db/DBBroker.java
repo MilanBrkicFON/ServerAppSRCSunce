@@ -44,29 +44,22 @@ public class DBBroker {
         String pass = Util.getInstance().getPassword();
         connection = DriverManager.getConnection(url, user, pass);
         connection.setAutoCommit(false);
-        System.out.println("Uspesno uspostavljena konekcija.");
+        //System.out.println("Uspesno uspostavljena konekcija.");
     }
 
     public void raskiniKonekciju() throws SQLException {
         connection.close();
-        System.out.println("Raskinuta konekcija.");
+        //System.out.println("Raskinuta konekcija.");
     }
 
     public void potvrdiTransakciju() throws SQLException {
         connection.commit();
-        System.out.println("potvrdio transakciju");
+        //System.out.println("potvrdio transakciju");
     }
 
     public void ponistiTransakciju() throws SQLException {
         connection.rollback();
-        System.out.println("ponistio transakciju");
-    }
-
-    public void update(String column, Object value, int clanId) throws SQLException {
-        String upit = "SELECT DISTINCT datum FROM trening";
-        System.out.println(upit);
-        PreparedStatement statement = connection.prepareStatement(upit);
-
+       //System.out.println("ponistio transakciju");
     }
 
     public List<Clan> getAllClanovi() throws SQLException {

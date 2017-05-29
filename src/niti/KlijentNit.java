@@ -55,11 +55,10 @@ public class KlijentNit implements Runnable {
     private void obradiKlijenta(Socket socket) throws IOException, ClassNotFoundException {
         while (true) {
             try {
-                System.out.println("Cekam zahtev od klijenta");
+                //System.out.println("Cekam zahtev od klijenta");
                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                 Object obj = in.readObject();
                 RequestObject request = (RequestObject) obj;
-
                 ResponseObject response = obradiZahtev(request);
 
                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
