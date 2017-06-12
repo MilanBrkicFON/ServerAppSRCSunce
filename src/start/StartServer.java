@@ -13,7 +13,7 @@ import server.Server;
  */
 public class StartServer {
     public static void main(String[] args) {
-        Server server = new Server(12321);
+        Server server = new Server(9000);
         new Thread(server).start();
     }
 }

@@ -12,8 +12,6 @@ import domen.Trener;
 import domen.Trening;
 import greske.SQLObjekatPostojiException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.time.LocalDate;
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import komunikacija.Komunikacija;
 import kontroler.Kontroler;
 import request.RequestObject;
 import response.ResponseObject;
@@ -37,14 +36,20 @@ public class KlijentNit implements Runnable {
 
     public KlijentNit(Socket socket) {
         this.socket = socket;
+
     }
 
     @Override
     public void run() {
         try {
-
             obradiKlijenta(socket);
 
+        } catch (SocketException ex) {
+            try {
+                this.socket.close();
+            } catch (IOException ex1) {
+                Logger.getLogger(KlijentNit.class.getName()).log(Level.SEVERE, null, ex1);
+            }
         } catch (IOException ex) {
             Logger.getLogger(KlijentNit.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -55,17 +60,18 @@ public class KlijentNit implements Runnable {
     private void obradiKlijenta(Socket socket) throws IOException, ClassNotFoundException {
         while (true) {
             try {
-                //System.out.println("Cekam zahtev od klijenta");
-                ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-                Object obj = in.readObject();
-                RequestObject request = (RequestObject) obj;
+
+                System.out.println("Cekam zahtev od klijenta");
+
+                RequestObject request = Komunikacija.vratiInstancu().procitajZahtev(socket);
+
                 ResponseObject response = obradiZahtev(request);
 
-                ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-                out.writeObject(response);
-                out.flush();
+                Komunikacija.vratiInstancu().posaljiOdgovor(response, socket);
+                
             } catch (SocketException se) {
                 Thread.currentThread().interrupt();
+                se.printStackTrace();
                 break;
             }
         }

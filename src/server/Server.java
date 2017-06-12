@@ -18,7 +18,7 @@ import niti.KlijentNit;
  */
 public class Server implements Runnable {
 
-    protected int port = 12321;
+    protected int port = 9000;
     protected ServerSocket serverSocket = null;
     protected boolean zaustavljen = false;
 
@@ -31,7 +31,7 @@ public class Server implements Runnable {
 
         try {
             serverSocket = new ServerSocket(port);
-            System.out.println("Server je podignut i osluskuje na portu 12321.\n\n");
+            System.out.println("Server je podignut i osluskuje na portu "+port+".\n\n");
             int i = 0;
             while (!zaustavljen) {
                 i++;
