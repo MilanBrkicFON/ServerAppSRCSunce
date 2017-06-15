@@ -286,6 +286,51 @@ public class Kontroler {
         }
     }
 
+    public void ubaciNaTrening(Trener t, Trening trening) throws Exception {
+        uspostaviKonekcijuNaBazu();
+        try {
+            dbbr.insertTrenerOnTraining(t, trening);
+            dbbr.potvrdiTransakciju();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            dbbr.ponistiTransakciju();
+            throw new Exception("Desila se greška tokom ubacivanja člana na trening.");
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+    }
+
+    public void ubaciNaTrening(List<Trener> treneri, Trening trening) throws Exception {
+        uspostaviKonekcijuNaBazu();
+        try {
+            for (Trener t : treneri) {
+                dbbr.insertTrenerOnTraining(t, trening);
+            }
+            dbbr.potvrdiTransakciju();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            dbbr.ponistiTransakciju();
+            throw new Exception("Desila se greška tokom ubacivanja člana na trening.");
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+    }
+
+    public void sacuvajTrening(Trening trening) throws Exception {
+        uspostaviKonekcijuNaBazu();
+        try {
+            dbbr.addTrening(trening);
+
+            dbbr.potvrdiTransakciju();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            dbbr.ponistiTransakciju();
+            throw new Exception("Desila se greška tokom ubacivanja člana na trening.");
+        } finally {
+            dbbr.raskiniKonekciju();
+        }
+    }
+
     public List<Clan> promeni(List<Clan> clanovi) throws Exception {
         uspostaviKonekcijuNaBazu();
         List<Clan> promenjeniClanovi = new ArrayList<>();

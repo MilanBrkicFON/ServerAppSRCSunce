@@ -61,17 +61,15 @@ public class KlijentNit implements Runnable {
         while (true) {
             try {
 
-                System.out.println("Cekam zahtev od klijenta");
-
                 RequestObject request = Komunikacija.vratiInstancu().procitajZahtev(socket);
 
                 ResponseObject response = obradiZahtev(request);
 
                 Komunikacija.vratiInstancu().posaljiOdgovor(response, socket);
-                
+
             } catch (SocketException se) {
                 Thread.currentThread().interrupt();
-                se.printStackTrace();
+                //se.printStackTrace();
                 break;
             }
         }
@@ -304,21 +302,35 @@ public class KlijentNit implements Runnable {
                     response.setMessage(ex.getMessage());
                 }
                 return response;
-//            case Akcije.UBACI_TRENERA:
-//                trener = (Trener) request.getObject();
-//                try {
-//                    Kontroler.getInstance().u;
-//                    response.setStatus(EnumResponseStatus.OK);
-//
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                    response.setStatus(EnumResponseStatus.ERROR);
-//                    response.setMessage(ex.getMessage());
-//                } catch (SQLObjekatPostojiException ex) {
-//                    response.setStatus(EnumResponseStatus.ERROR);
-//                    response.setMessage(ex.getMessage());
-//                }
-//                return response;                
+            case Akcije.KREIRAJ_TRENING:
+                trening = (Trening) request.getObject();
+                try {
+                    Kontroler.getInstance().sacuvajTrening(trening);
+                    if (trening.getTreneri() != null) {
+                        Kontroler.getInstance().ubaciNaTrening(trening.getTreneri(), trening);
+                    }
+                    response.setStatus(EnumResponseStatus.OK);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
+            case Akcije.DODAJ_TRENERA_NA_TRENING:
+                Object obj1[] = (Object[]) request.getObject();
+                trener = (Trener) obj1[0];
+                trening = (Trening) obj1[1];
+                try {
+                    Kontroler.getInstance().ubaciNaTrening(trener, trening);
+                    response.setStatus(EnumResponseStatus.OK);
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
             default:
                 response.setMessage("Nije implementirana akcija.");
                 response.setStatus(EnumResponseStatus.ERROR);

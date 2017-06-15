@@ -59,7 +59,7 @@ public class DBBroker {
 
     public void ponistiTransakciju() throws SQLException {
         connection.rollback();
-       //System.out.println("ponistio transakciju");
+        //System.out.println("ponistio transakciju");
     }
 
     public List<Clan> getAllClanovi() throws SQLException {
@@ -349,6 +349,7 @@ public class DBBroker {
             statement.executeUpdate();
         }
     }
+
     public int vratiMaxIdTrener() throws SQLException {
         String upit = "SELECT MAX(trenerId) AS maxid FROM trener";
         System.out.println(upit);
@@ -362,7 +363,7 @@ public class DBBroker {
         }
         return maxId;
     }
-    
+
     public void obrisiClana(Clan clan) throws SQLException {
         String upit = "DELETE FROM clan WHERE clanID = ?";
         System.out.println(upit);
@@ -461,4 +462,31 @@ public class DBBroker {
             statement.executeUpdate();
         }
     }
+
+    public void insertTrenerOnTraining(Trener t, Trening trening) throws SQLException {
+        String upit = "INSERT INTO tt(tid, vremeod, vremedo, datum) VALUES(?,?,?,?)";
+        System.out.println(upit);
+        try (PreparedStatement statement = connection.prepareStatement(upit)) {
+            statement.setInt(1, t.getTrenerID());
+            statement.setTime(2, Time.valueOf(trening.getVremeOd()));
+            statement.setTime(3, Time.valueOf(trening.getVremeDo()));
+            statement.setDate(4, Date.valueOf(trening.getDatum()));
+
+            statement.executeUpdate();
+        }
+    }
+
+    public void addTrening(Trening t) throws SQLException {
+        String upit = "INSERT INTO TRENING VALUES(?,?,?)";
+        System.out.println(upit);
+
+        try (PreparedStatement st = connection.prepareStatement(upit)) {
+            st.setDate(3, Date.valueOf(t.getDatum()));
+            st.setTime(1, Time.valueOf(t.getVremeOd()));
+            st.setTime(2, Time.valueOf(t.getVremeDo()));
+
+            st.executeUpdate();
+        }
+    }
+
 }
