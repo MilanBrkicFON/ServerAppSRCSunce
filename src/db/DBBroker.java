@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -124,39 +125,23 @@ public class DBBroker {
         return treneri;
     }
 
-    public List<Trening> gatAllTrening() throws SQLException {
-        String upit = "SELECT vremeOd, vremeDo, datum FROM trening";
+    public List<Trening> gatAllTreninzi() throws SQLException {
+        String upit = "SELECT * FROM trening";
         System.out.println(upit);
         PreparedStatement statement = connection.prepareStatement(upit);
         ResultSet rs = statement.executeQuery();
 
         List<Trening> treninzi = new ArrayList<>();
         while (rs.next()) {
-            Trening t = new Trening();
-            t.setVremeOd(rs.getTime("vremeOd").toLocalTime());
-            t.setVremeDo(rs.getTime("vremeDo").toLocalTime());
-            t.setDatum(rs.getDate("datum").toLocalDate());
+            LocalDate datum = rs.getDate("datum").toLocalDate();
+            LocalTime vremeOd = rs.getTime("vremeOd").toLocalTime();
+            LocalTime vremeDo = rs.getTime("vremeDo").toLocalTime();
+            Trening t = new Trening(vremeOd, vremeDo, datum);
             treninzi.add(t);
         }
         rs.close();
         statement.close();
         return treninzi;
-    }
-
-    public List<LocalDate> gatAllDatumi() throws SQLException {
-        String upit = "SELECT DISTINCT datum FROM trening";
-        System.out.println(upit);
-        PreparedStatement statement = connection.prepareStatement(upit);
-        ResultSet rs = statement.executeQuery();
-
-        List<LocalDate> datumi = new ArrayList<>();
-        while (rs.next()) {
-            LocalDate datum = rs.getDate("datum").toLocalDate();
-            datumi.add(datum);
-        }
-        rs.close();
-        statement.close();
-        return datumi;
     }
 
     /**
@@ -208,7 +193,7 @@ public class DBBroker {
         trening.setTreneri(treneri);
     }
 
-    public List<Clan> getAllClan(Trening trening) throws SQLException {
+    public List<Clan> getAllClanovi(Trening trening) throws SQLException {
         String upit = "SELECT c.*, m.naziv AS naziv "
                 + "FROM clan AS c LEFT JOIN mesto AS m ON c.ptt = m.ptt "
                 + "JOIN tclan AS tc ON c.clanid = tc.cid "
@@ -241,7 +226,7 @@ public class DBBroker {
         return clanovi;
     }
 
-    public List<Trener> getAllTrener(Trening trening) throws SQLException {
+    public List<Trener> getAllTreneri(Trening trening) throws SQLException {
         String upit = "SELECT t.* , s.naziv as naziv, s.maxBrClanova as maxBr "
                 + "FROM trener AS t LEFT JOIN sport AS s ON t.sportID = s.sportID JOIN tt AS tt ON t.trenerID = tt.tID "
                 + "WHERE tt.vremeOd = ? AND tt.vremeDo = ? AND tt.datum = ?";
@@ -418,7 +403,7 @@ public class DBBroker {
         }
     }
 
-    public Collection<? extends Sport> getAllSport() throws SQLException {
+    public List<Sport> getAllSport() throws SQLException {
         String upit = "SELECT sportId, naziv, maxBrClanova FROM sport";
         System.out.println(upit);
 

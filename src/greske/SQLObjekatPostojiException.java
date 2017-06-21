@@ -5,11 +5,13 @@
  */
 package greske;
 
+import java.sql.SQLException;
+
 /**
  *
  * @author Milan
  */
-public class SQLObjekatPostojiException extends Throwable{
+public class SQLObjekatPostojiException extends SQLException{
    
     public SQLObjekatPostojiException(String message) {
         super(message);

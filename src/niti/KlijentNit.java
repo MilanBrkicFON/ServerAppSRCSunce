@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import komunikacija.Komunikacija;
-import kontroler.Kontroler;
+import poslovnaLogika.Kontroler;
 import request.RequestObject;
 import response.ResponseObject;
 import status.EnumResponseStatus;
@@ -107,10 +107,7 @@ public class KlijentNit implements Runnable {
                     ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
-                } catch (SQLObjekatPostojiException ex) {
-                    response.setStatus(EnumResponseStatus.ERROR);
-                    response.setMessage(ex.getMessage());
-                }
+                } 
                 return response;
             case Akcije.OBRISI_CLANA:
                 clan = (Clan) request.getObject();
@@ -221,21 +218,9 @@ public class KlijentNit implements Runnable {
                     response.setMessage(ex.getMessage());
                 }
                 return response;
-            case Akcije.VRATI_DATUME:
+            case Akcije.VRATI_TRENINGE:
                 try {
-                    response.setObject(Kontroler.getInstance().vratiSveDatume());
-                    response.setStatus(EnumResponseStatus.OK);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    response.setStatus(EnumResponseStatus.ERROR);
-                    response.setMessage(ex.getMessage());
-                }
-                return response;
-
-            case Akcije.VRATI_VREMENA:
-                try {
-                    LocalDate datum = (LocalDate) request.getObject();
-                    response.setObject(Kontroler.getInstance().vratiSvaVremena(datum));
+                    response.setObject(Kontroler.getInstance().vratiSveTreninge());
                     response.setStatus(EnumResponseStatus.OK);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -284,7 +269,7 @@ public class KlijentNit implements Runnable {
                     trener = (Trener) request.getObject();
                     Kontroler.getInstance().ubaciTrenera(trener);
                     response.setStatus(EnumResponseStatus.OK);
-                } catch (Exception | SQLObjekatPostojiException ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
