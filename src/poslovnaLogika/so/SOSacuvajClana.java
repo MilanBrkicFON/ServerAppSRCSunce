@@ -33,7 +33,7 @@ public class SOSacuvajClana extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        dbbr.insertClan(clan);
+        dbbr.sacuvajObjekat(clan);
     }
     
 }

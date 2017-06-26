@@ -28,7 +28,7 @@ public class SOObrisiClana extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        dbbr.obrisiClana(clan);
+        dbbr.obrisi(clan);
     }
     
 }

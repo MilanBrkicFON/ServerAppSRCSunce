@@ -5,6 +5,7 @@
  */
 package poslovnaLogika.so;
 
+import domen.TT;
 import domen.Trener;
 import domen.Trening;
 import greske.SQLObjekatPostojiException;
@@ -30,7 +31,7 @@ public class SOUbaciTreneraNaTrening extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        dbbr.insertTrenerOnTraining(trener, trening);
+        dbbr.sacuvajObjekat(new TT(trener, trening));
     }
     
 }

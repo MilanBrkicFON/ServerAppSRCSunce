@@ -7,6 +7,7 @@ package poslovnaLogika.so;
 
 import domen.Clan;
 import domen.Mesto;
+import domen.TClan;
 import domen.Trening;
 import greske.SQLObjekatPostojiException;
 import java.util.List;
@@ -32,7 +33,8 @@ public class SOUbaciClanaNaTrening extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        dbbr.insertClanOnTraining(clan, trening);
+//        dbbr.insertClanOnTraining(clan, trening);
+        dbbr.sacuvajObjekat(new TClan(clan, trening));
     }
     
 }

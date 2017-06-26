@@ -35,7 +35,7 @@ public class SOPromeniClanove extends OpstaSO {
         try {
             for (Clan clan : clanovi) {
                 if (clan.isPromenjen()) {
-                    dbbr.updateClan(clan);
+                    dbbr.izmeniObjekat(clan);
                     promenjeniClanovi.add(clan);
                     clan.setPromenjen(false);
                 }

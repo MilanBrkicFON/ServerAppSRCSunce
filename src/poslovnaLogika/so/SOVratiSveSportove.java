@@ -23,7 +23,7 @@ public class SOVratiSveSportove extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        sportovi=dbbr.getAllSport();
+        sportovi=(List<Sport>) dbbr.vratiListu(new Sport());
     }
     
     public List<Sport> getSportove(){

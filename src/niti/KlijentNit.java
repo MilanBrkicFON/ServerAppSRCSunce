@@ -92,7 +92,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -104,10 +103,9 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
-                } 
+                }
                 return response;
             case Akcije.OBRISI_CLANA:
                 clan = (Clan) request.getObject();
@@ -116,7 +114,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -127,7 +124,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -141,7 +137,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -153,7 +148,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -164,7 +158,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -175,7 +168,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -189,7 +181,6 @@ public class KlijentNit implements Runnable {
                         response.setStatus(EnumResponseStatus.OK);
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -201,7 +192,6 @@ public class KlijentNit implements Runnable {
                     response.setObject(Kontroler.getInstance().vratiSveTrenere(trening));
                     response.setStatus(EnumResponseStatus.OK);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -213,7 +203,6 @@ public class KlijentNit implements Runnable {
                     response.setObject(Kontroler.getInstance().vratiSveClanove(trening));
                     response.setStatus(EnumResponseStatus.OK);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -223,7 +212,6 @@ public class KlijentNit implements Runnable {
                     response.setObject(Kontroler.getInstance().vratiSveTreninge());
                     response.setStatus(EnumResponseStatus.OK);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -237,7 +225,6 @@ public class KlijentNit implements Runnable {
                         response.setStatus(EnumResponseStatus.OK);
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -248,7 +235,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
                     response.setObject(sportovi);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -259,7 +245,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
                     response.setObject(treneri);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -270,7 +255,6 @@ public class KlijentNit implements Runnable {
                     Kontroler.getInstance().ubaciTrenera(trener);
                     response.setStatus(EnumResponseStatus.OK);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -282,7 +266,6 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -291,13 +274,16 @@ public class KlijentNit implements Runnable {
                 trening = (Trening) request.getObject();
                 try {
                     Kontroler.getInstance().sacuvajTrening(trening);
+                    trening.setTreningId(Kontroler.getInstance().vratiMaxIdTrening());
                     if (trening.getTreneri() != null) {
                         Kontroler.getInstance().ubaciNaTrening(trening.getTreneri(), trening);
                     }
                     response.setStatus(EnumResponseStatus.OK);
 
+                } catch (SQLObjekatPostojiException ex) {
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }
@@ -311,7 +297,31 @@ public class KlijentNit implements Runnable {
                     response.setStatus(EnumResponseStatus.OK);
 
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
+            case Akcije.OBRISI_CLANOVE_SA_TRENINGA:
+                List<Object> pom = (List<Object>) request.getObject();
+                List<Clan> clanovi = (List<Clan>) pom.get(0);
+                trening = (Trening) pom.get(1);
+                try {
+                    Kontroler.getInstance().obrisiClanove(clanovi, trening);
+                    response.setStatus(EnumResponseStatus.OK);
+                    response.setMessage("Uspesno obrisani clanovi sa treninga!");
+                } catch (Exception ex) {
+                    response.setStatus(EnumResponseStatus.ERROR);
+                    response.setMessage(ex.getMessage());
+                }
+                return response;
+            case Akcije.OBRISI_TRENERE_SA_TRENINGA:
+                List<Object> pom1 = (List<Object>) request.getObject();
+                trening = (Trening) pom1.get(1);
+                try {
+                    Kontroler.getInstance().obrisiTrenere((List<Trener>) pom1.get(0), trening);
+                    response.setStatus(EnumResponseStatus.OK);
+                    response.setMessage("Uspesno obrisani treneri sa treninga!");
+                } catch (Exception ex) {
                     response.setStatus(EnumResponseStatus.ERROR);
                     response.setMessage(ex.getMessage());
                 }

@@ -29,7 +29,7 @@ public class SOVratiSveClanoveNaTreningu extends OpstaSO {
 
     @Override
     protected void izvrsi() throws Exception {
-        clanovi = dbbr.getAllClanovi(trening);
+//        clanovi = dbbr.getAllClanovi(trening);
     }
 
     public List<Clan> getClanovi() {

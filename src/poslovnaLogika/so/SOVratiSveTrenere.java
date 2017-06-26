@@ -22,7 +22,7 @@ public class SOVratiSveTrenere extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        treneri=dbbr.getAllTreneri();
+        treneri=(List<Trener>) dbbr.vratiListu(new Trener());
     }
     
     public List<Trener> getTreneri(){

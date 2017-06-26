@@ -5,6 +5,7 @@
  */
 package poslovnaLogika.so;
 
+import domen.Clan;
 import domen.TT;
 import domen.Trener;
 import domen.Trening;
@@ -13,28 +14,27 @@ import java.util.List;
 
 /**
  *
- * @author Korisnik
+ * @author Milan
  */
-public class SOUbaciTrenereNaTrening extends OpstaSO {
-
+public class SOObrisiTrenereSaTreninga extends OpstaSO{
     private final List<Trener> treneri;
     private final Trening trening;
 
-    public SOUbaciTrenereNaTrening(List<Trener> treneri, Trening trening) {
-        this.treneri = treneri;
+    public SOObrisiTrenereSaTreninga(List<Trener> tr, Trening trening) {
+        this.treneri = tr;
         this.trening = trening;
     }
-
+    
     @Override
     protected void proveriPreduslove() throws Exception, SQLObjekatPostojiException {
-        //nema preduslove
+        //nema preduslova
     }
 
     @Override
     protected void izvrsi() throws Exception {
         for (Trener t : treneri) {
-            dbbr.sacuvajObjekat(new TT(t, trening));
+            dbbr.obrisi(new TT(t,trening));
         }
     }
-
+    
 }

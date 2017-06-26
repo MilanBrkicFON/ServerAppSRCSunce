@@ -40,11 +40,10 @@ public abstract class OpstaSO {
         dbbr.raskiniKonekciju();
     }
     
-    public void opsteIzvrsenje() throws Exception, SQLObjekatPostojiException{
+    public final synchronized void opsteIzvrsenje() throws Exception, SQLObjekatPostojiException{
         try {
             uspostaviKonekciju();
         } catch (Exception e) {
-            e.printStackTrace();
             throw e;
         }
         
@@ -53,7 +52,6 @@ public abstract class OpstaSO {
             izvrsi();
             potvrdiTransakciju();
         }catch(Exception e){
-            e.printStackTrace();
             ponistiTransakciju();
             throw e;
         }finally{

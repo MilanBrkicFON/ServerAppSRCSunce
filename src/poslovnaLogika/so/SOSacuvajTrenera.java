@@ -28,13 +28,13 @@ public class SOSacuvajTrenera extends OpstaSO{
         so.opsteIzvrsenje();
         List<Trener> treneri = so.getTreneri();
         if (treneri.contains(trener)) {
-            throw new SQLObjekatPostojiException("Clan sa datim imenom vec postoji u bazi!");
+            throw new SQLObjekatPostojiException("Trener sa datim imenom vec postoji u bazi!");
         }
     }
 
     @Override
     protected void izvrsi() throws Exception {
-        dbbr.insertTrener(trener);
+        dbbr.sacuvajObjekat(trener);
     }
     
 }

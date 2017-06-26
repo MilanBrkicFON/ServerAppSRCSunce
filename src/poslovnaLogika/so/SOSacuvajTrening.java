@@ -30,9 +30,9 @@ public class SOSacuvajTrening extends OpstaSO {
         List<Trening> trenings = so.getTreninzi();
         for (Trening t : trenings) {
             if (t.getDatum().equals(trening.getDatum())) {
-                if (trening.getVremeOd().isAfter(t.getVremeOd())
-                        || trening.getVremeDo().isBefore(t.getVremeDo())
-                        || (trening.getVremeOd().isBefore(t.getVremeDo()) && trening.getVremeOd().isAfter(t.getVremeOd()))
+                if ((trening.getVremeOd().equals(t.getVremeOd()) && trening.getVremeDo().equals(t.getVremeDo())) ||
+                        
+                        (trening.getVremeOd().isBefore(t.getVremeDo()) && trening.getVremeOd().isAfter(t.getVremeOd()))
                         || (trening.getVremeDo().isAfter(t.getVremeOd()) && trening.getVremeDo().isBefore(t.getVremeDo())))  {
 
                     throw new SQLObjekatPostojiException("Vreme treninga se poklapa sa drugim treningom. Trening koji postoji: " + t.toString());
@@ -43,7 +43,7 @@ public class SOSacuvajTrening extends OpstaSO {
 
     @Override
     protected void izvrsi() throws Exception {
-        dbbr.addTrening(trening);
+        dbbr.sacuvajObjekat(trening);
     }
 
 }

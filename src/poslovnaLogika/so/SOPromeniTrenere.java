@@ -34,7 +34,7 @@ public class SOPromeniTrenere extends OpstaSO {
         try {
             for (Trener t : treneri) {
                 if (t.isPromenjen()) {
-                    dbbr.updateTrener(t);
+                    dbbr.izmeniObjekat(t);
                     promenjeniTreneri.add(t);
                     t.setPromenjen(false);
                 }

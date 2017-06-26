@@ -22,7 +22,7 @@ public class SOVratiSvaMesta extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        mesta=dbbr.getAllMesto();
+        mesta=(List<Mesto>) dbbr.vratiListu(new Mesto());
     }
     
     public List<Mesto> getMesta(){

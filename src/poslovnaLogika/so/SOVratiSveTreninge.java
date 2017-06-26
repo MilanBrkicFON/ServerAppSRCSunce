@@ -14,9 +14,10 @@ import java.util.List;
  *
  * @author Korisnik
  */
-public class SOVratiSveTreninge extends OpstaSO{
+public class SOVratiSveTreninge extends OpstaSO {
+
     private List<Trening> treninzi;
-    
+
     @Override
     protected void proveriPreduslove() throws Exception {
         //nema preduslova
@@ -24,11 +25,11 @@ public class SOVratiSveTreninge extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        treninzi=dbbr.gatAllTreninzi();
+        treninzi = (List<Trening>) dbbr.vratiListu(new Trening());
     }
-    
-    public List<Trening> getTreninzi(){
+
+    public List<Trening> getTreninzi() {
         return treninzi;
     }
-    
+
 }

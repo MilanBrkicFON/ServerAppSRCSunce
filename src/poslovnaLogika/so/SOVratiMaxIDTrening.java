@@ -5,28 +5,27 @@
  */
 package poslovnaLogika.so;
 
-import domen.Trener;
 import greske.SQLObjekatPostojiException;
 
 /**
  *
- * @author Korisnik
+ * @author Milan
  */
-public class SOObrisiTrenera extends OpstaSO{
-    private Trener trener;
+public class SOVratiMaxIDTrening extends OpstaSO {
 
-    public SOObrisiTrenera(Trener trener) {
-        this.trener = trener;
-    }
-    
+    private int id;
+
     @Override
-    protected void proveriPreduslove() throws Exception,SQLObjekatPostojiException {
-//  nema preduslova
+    protected void proveriPreduslove() throws Exception, SQLObjekatPostojiException {
+        //nema preduslove
     }
 
     @Override
     protected void izvrsi() throws Exception {
-        dbbr.obrisi(trener);
+        id = dbbr.vratiMaxIdTrening();
     }
-    
+
+    public int getId() {
+        return id;
+    }
 }

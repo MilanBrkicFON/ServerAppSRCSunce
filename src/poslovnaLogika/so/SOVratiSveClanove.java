@@ -13,9 +13,10 @@ import java.util.List;
  *
  * @author Korisnik
  */
-public class SOVratiSveClanove extends OpstaSO{
+public class SOVratiSveClanove extends OpstaSO {
+
     private List<Clan> clanovi;
-    
+
     @Override
     protected void proveriPreduslove() throws Exception {
         //nema preduslova
@@ -23,11 +24,11 @@ public class SOVratiSveClanove extends OpstaSO{
 
     @Override
     protected void izvrsi() throws Exception {
-        clanovi=dbbr.getAllClanovi();
+        clanovi = (List<Clan>) dbbr.vratiListu(new Clan());
     }
-    
-    public List<Clan> getClanovi(){
+
+    public List<Clan> getClanovi() {
         return clanovi;
     }
-    
+
 }
